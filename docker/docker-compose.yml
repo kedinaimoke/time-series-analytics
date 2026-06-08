@@ -1,0 +1,28 @@
+services:
+
+  influxdb:
+    image: influxdb:2.7
+    container_name: influxdb
+    ports:
+      - "8086:8086"
+
+    volumes:
+      - influxdb-data:/var/lib/influxdb2
+
+    environment:
+      DOCKER_INFLUXDB_MODE: setup
+      DOCKER_INFLUXDB_USERNAME: $ {INFLUXDB_USERNAME}
+      DOCKER_INFLUXDB_PASSWORD: $ {INFLUXDB_PASSWORD}
+      DOCKER_INFLUXDB_ORG: $ {INFLUXDB_ORG}
+      DOCKER_INFLUXDB_BUCKET: $ {INFLUXDB_BUCKET}
+      DOCKER_INFLUXDB_ADMIN_TOKEN: $ {INFLUXDB_TOKEN}
+
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+volumes:
+  influxdb-data:
+  
