@@ -110,5 +110,37 @@ class QueryService:
 
         return results
 
+    def get_temperature_history(self, sensor_id):
+
+        query = f'''
+        from(bucket: "{BUCKET}")
+        |> range(start: -24h)
+        |> filter(fn: (r) => r.sensor_id == "{sensor_id}")
+        |> filter(fn: (r) => r._field == "temperature")
+        |> keep(columns: ["_time", "_value"])
+        |> sort(columns: ["_time"])
+        '''
+
+        try:
+            tables = self.query_api.query(query)
+
+        except Exception as e:
+            print("History query failed:", e)
+            return []
+
+        history = []
+
+        for table in tables:
+            for record in table.records:
+
+                history.append(
+                    {
+                        "time": record.get_time(),
+                        "temperature": record.get_value()
+                    }
+                )
+
+        return history
+
     def close(self):
         self.client.close()

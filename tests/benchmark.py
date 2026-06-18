@@ -1,4 +1,5 @@
 import time
+
 from storage.query_service import QueryService
 
 
@@ -6,39 +7,70 @@ def benchmark(sensor_id="sensor_1", runs=50):
 
     service = QueryService()
 
-    print("\n--- PERFORMANCE TEST START ---\n")
+    print("\nPERFORMANCE TEST\n")
 
+    # Cache Miss
     start = time.time()
-    result = service.get_latest_temperature(sensor_id)
-    end = time.time()
 
-    cold_latency = end - start
+    result = service.get_latest_sensor_metrics(
+        sensor_id
+    )
 
-    print(f"\nCOLD START (Cache MISS)")
-    print(f"Result: {result}")
+    cold_latency = time.time() - start
+
+    print("COLD START (CACHE MISS)")
+    print(result)
     print(f"Latency: {cold_latency:.6f} seconds\n")
 
+    # Cache Hits
     warm_latencies = []
 
-    for i in range(runs):
+    for _ in range(runs):
+
         start = time.time()
-        result = service.get_latest_temperature(sensor_id)
-        end = time.time()
 
-        warm_latencies.append(end - start)
+        service.get_latest_sensor_metrics(
+            sensor_id
+        )
 
-    avg_warm_latency = sum(warm_latencies) / len(warm_latencies)
+        warm_latencies.append(
+            time.time() - start
+        )
 
-    print(f"\nWARM START (Cache HIT)")
+    avg_warm_latency = (
+        sum(warm_latencies)
+        / len(warm_latencies)
+    )
+
+    improvement = (
+        (cold_latency - avg_warm_latency)
+        / cold_latency
+    ) * 100
+
+    print("WARM START (CACHE HIT)")
     print(f"Runs: {runs}")
-    print(f"Average Latency: {avg_warm_latency:.6f} seconds\n")
+    print(
+        f"Average Latency: "
+        f"{avg_warm_latency:.6f} seconds\n"
+    )
 
-    improvement = ((cold_latency - avg_warm_latency) / cold_latency) * 100
+    print("FINAL RESULTS")
+    print(
+        f"Cold Latency: "
+        f"{cold_latency:.6f}s"
+    )
 
-    print("--- FINAL RESULTS ---")
-    print(f"Cold Latency: {cold_latency:.6f}s")
-    print(f"Warm Latency: {avg_warm_latency:.6f}s")
-    print(f"Performance Improvement: {improvement:.2f}%\n")
+    print(
+        f"Warm Latency: "
+        f"{avg_warm_latency:.6f}s"
+    )
+
+    print(
+        f"Performance Improvement: "
+        f"{improvement:.2f}%"
+    )
+
+    service.close()
 
 
 if __name__ == "__main__":

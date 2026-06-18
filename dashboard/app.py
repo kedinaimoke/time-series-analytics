@@ -26,7 +26,7 @@ st.title("Time-Series Analytics with Caching Layer")
 
 st.markdown(
     """
-    **Technologies Used:** InfluxDB + Redis + Apache Spark
+    **Technologies Used:** InfluxDB + Redis + Spark
 
     Presented in this project is a real-time monitoring dashboard for sensor analytics.
     """
@@ -89,7 +89,7 @@ with col4:
 with col5:
     st.metric(
         "Cache Gain",
-        "96.53%"
+        "~92% (11x)"
     )
 
 st.subheader("Latest Sensor Readings")
@@ -173,6 +173,39 @@ st.plotly_chart(
     width='stretch'
 )
 
+st.subheader("24-Hour Historical Temperature Trends")
+
+selected_sensor = st.selectbox(
+    "Select Sensor",
+    df["sensor_id"].tolist()
+)
+
+history = service.get_temperature_history(
+    selected_sensor
+)
+
+if history:
+
+    history_df = pd.DataFrame(history)
+
+    fig_history = px.line(
+        history_df,
+        x="time",
+        y="temperature",
+        title=f"{selected_sensor} Temperature (Last 24 Hours)"
+    )
+
+    st.plotly_chart(
+        fig_history,
+        use_container_width=True
+    )
+
+else:
+
+    st.warning(
+        "No historical data available."
+    )
+
 st.subheader("Detected Anomalies")
 
 if len(anomalies) > 0:
@@ -230,11 +263,11 @@ Sensor Generator
       Redis
 (Cache Layer)
         ↓
-   Query Service
+Query Service
         ↓
-   Streamlit Dashboard
+Streamlit Dashboard
         ↓
-    Apache Spark
+    Spark
 (Historical Analytics)
 """
 )
@@ -248,12 +281,13 @@ Big Data Architectures Project
 Technologies:
 • InfluxDB
 • Redis
-• Apache Spark
+• Spark
 • Streamlit
 • Python
 
 Created by:
 Jane Kedina Imoke
+&
 Ricardo Ramos Morales
 """
 )

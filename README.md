@@ -42,7 +42,7 @@ This project follows a simplified Lambda Architecture:
 - Streamlit Dashboard
 
 ### Batch Layer
-- Apache Spark
+- Spark
 - Historical analytics and anomaly detection
 
 ### Storage Layer
@@ -57,7 +57,7 @@ flowchart TD
     B[InfluxDB<br/>Time-series Storage]
     C[Redis Cache<br/>Fast Query Layer]
     D[Query Service<br/>Python API Layer]
-    E[Apache Spark<br/>Batch Analytics]
+    E[Spark<br/>Batch Analytics]
 
     A --> B
     B --> C
@@ -189,7 +189,7 @@ The system successfully demonstrates:
 - Real-time sensor data ingestion
 - Time-series storage using InfluxDB
 - Redis-based query acceleration
-- Historical analytics using Apache Spark
+- Historical analytics using Spark
 - Rule-based and statistical anomaly detection
 - Interactive visualisation using Streamlit
 
