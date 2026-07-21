@@ -197,7 +197,7 @@ if history:
 
     st.plotly_chart(
         fig_history,
-        use_container_width=True
+        width="stretch"
     )
 
 else:
